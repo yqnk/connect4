@@ -24,6 +24,11 @@ impl Holder {
             self.holders[column - 1][self.h_ptr[column - 1]] = disk;
             self.h_ptr[column - 1] += 1;
         }
+        
+    }
+
+    pub fn check_columns(&self) -> bool {
+        (0..7).any(|j| (self.holders[j][2] == self.holders[j][3]) && (self.holders[j][4] == self.holders[j][5]) || (self.holders[j][4] == self.holders[j][1]) || (self.holders[j][1] == self.holders[j][0]))
     }
 }
 
