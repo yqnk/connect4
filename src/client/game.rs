@@ -12,11 +12,11 @@ pub struct Game {
 
 impl Game {
     pub fn new() -> Self {
-        Self { holder: Holder::new(), turn: 0 }
+        Self { holder: Holder::new(), turn: 1 }
     }
     
     pub fn begin(&mut self) {
-        while !self.is_finished() && self.turn < 42 {
+        while !self.is_finished() && self.turn < 43 {
             self.update();
         }
     }
@@ -25,12 +25,12 @@ impl Game {
         loop {
             self.clear();
             println!("{}", self.holder);
-            print!("> ");
+            print!("{} > ", self.turn);
             io::stdout().flush().expect("Failed flushing stdout...");
     
             let c: String = self.get_column();
             if c.contains("exit") {
-                self.turn = 42;
+                self.turn = 43;
                 break;
             }
     
@@ -57,7 +57,6 @@ impl Game {
     }
 
     fn is_finished(&self) -> bool {
-        // todo!("check if someone's won");
-        false
+        self.holder.check_lines() || self.holder.check_columns()
     }
 }
