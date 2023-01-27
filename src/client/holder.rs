@@ -2,12 +2,12 @@
 
 use super::disk::Disk;
 
-const COL_SIZE: usize = 6;
-const ROW_SIZE: usize = 7;
+const NUM_ROWS: usize = 6; // 6 rows = amt of elements in a column
+const NUM_COLS: usize = 7; // 7 columns = amt of elements in a row
 
 #[derive(Debug)]
 pub struct Holder {
-    pub holders: [[Disk; COL_SIZE]; ROW_SIZE],
+    pub holders: [[Disk; NUM_ROWS]; NUM_COLS],
     pub h_ptr: [usize; 7]
 }
 
@@ -28,7 +28,16 @@ impl Holder {
     }
 
     pub fn check_columns(&self) -> bool {
-        (0..7).any(|j| (self.holders[j][2] == self.holders[j][3]) && (self.holders[j][4] == self.holders[j][5]) || (self.holders[j][4] == self.holders[j][1]) || (self.holders[j][1] == self.holders[j][0]))
+        self.holders
+            .iter()
+            .flat_map(|c| c.windows(4))
+            .any(|w| (0..4).all(|i| w[i] == w[0] && w[0] != Disk::None))
+    }
+
+    pub fn check_lines(&self) -> bool {
+        (0..NUM_ROWS).any(|row| {
+            self.holders.iter().map(|col| col[row]).collect::<Vec<_>>().windows(4).any(|w| w[0] == w[1] && w[1] == w[2] && w[2] == w[3] && w[3] != Disk::None)
+        })
     }
 }
 
@@ -39,7 +48,7 @@ impl std::fmt::Display for Holder {
         for i in 0..6 {
             handler_display.push('|');
             for j in 0..7 {
-                handler_display.push_str(self.holders[j][COL_SIZE - 1 - i].as_str());
+                handler_display.push_str(self.holders[j][NUM_ROWS - 1 - i].as_str());
                 handler_display.push('|');
             }
             handler_display.push('\n');
