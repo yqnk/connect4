@@ -36,7 +36,7 @@ impl Holder {
 
     pub fn check_lines(&self) -> bool {
         (0..NUM_ROWS).any(|row| {
-            self.holders.iter().map(|col| col[row]).collect::<Vec<_>>().windows(4).any(|w| w[0] == w[1] && w[1] == w[2] && w[2] == w[3] && w[3] != Disk::None)
+            self.holders.iter().map(|col| col[row]).collect::<Vec<_>>().windows(4).any(|w| (0..4).all(|i| w[i] == w[0] && w[i] != Disk::None))
         })
     }
 }
