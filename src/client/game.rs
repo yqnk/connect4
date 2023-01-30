@@ -57,6 +57,6 @@ impl Game {
     }
 
     fn is_finished(&self) -> bool {
-        self.holder.check_lines() || self.holder.check_columns() || self.holder.check_left_diagonal()
+        self.holder.check_lines() || self.holder.check_columns() || self.holder.check_left_diagonal() || self.holder.check_right_diagonal()
     }
 }

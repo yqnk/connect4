@@ -43,18 +43,25 @@ impl Holder {
     }
 
     pub fn check_left_diagonal(&self) -> bool {
-        for d in 0..4 {
-            for r in 0..3 {
-                let c1 = self.holders[d][r];
-                let c2 = self.holders[d + 1][r + 1];
-                let c3 = self.holders[d + 2][r + 2];
-                let c4 = self.holders[d + 3][r + 3];
-                if c1 == c2 && c1 == c3 && c1 == c4 && c1 != Disk::None {
-                    return true
-                }
-            }
-        }
-        false
+        (0..4).any(|d| {
+            (0..3).any(|r| {
+                (0..4)
+                    .map(|i| self.holders[d + i][r + i])
+                    .all(|c| c == self.holders[d][r])
+                    && self.holders[d][r] != Disk::None
+            })
+        })
+    }
+
+    pub fn check_right_diagonal(&self) -> bool {
+        (0..4).any(|d| {
+            (3..6).rev().any(|r| {
+                (0..4)
+                    .map(|i| self.holders[d + i][r - i])
+                    .all(|c| c == self.holders[d][r])
+                    && self.holders[d][r] != Disk::None
+            })
+        })
     }
 }
 
