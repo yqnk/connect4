@@ -8,7 +8,7 @@ const NUM_COLS: usize = 7; // 7 columns = amt of elements in a row
 #[derive(Debug)]
 pub struct Holder {
     pub holders: [[Disk; NUM_ROWS]; NUM_COLS],
-    pub h_ptr: [usize; 7]
+    pub h_ptr: [usize; 7],
 }
 
 impl Holder {
@@ -20,11 +20,8 @@ impl Holder {
     }
 
     pub fn push(&mut self, column: usize, disk: Disk) {
-        if self.h_ptr[column - 1] < 6 {
-            self.holders[column - 1][self.h_ptr[column - 1]] = disk;
-            self.h_ptr[column - 1] += 1;
-        }
-        
+        self.holders[column - 1][self.h_ptr[column - 1]] = disk;
+        self.h_ptr[column - 1] += 1;
     }
 
     pub fn check_columns(&self) -> bool {
@@ -36,8 +33,28 @@ impl Holder {
 
     pub fn check_lines(&self) -> bool {
         (0..NUM_ROWS).any(|row| {
-            self.holders.iter().map(|col| col[row]).collect::<Vec<_>>().windows(4).any(|w| (0..4).all(|i| w[i] == w[0] && w[i] != Disk::None))
+            self.holders
+                .iter()
+                .map(|col| col[row])
+                .collect::<Vec<_>>()
+                .windows(4)
+                .any(|w| (0..4).all(|i| w[i] == w[0] && w[i] != Disk::None))
         })
+    }
+
+    pub fn check_left_diagonal(&self) -> bool {
+        for d in 0..4 {
+            for r in 0..3 {
+                let c1 = self.holders[d][r];
+                let c2 = self.holders[d + 1][r + 1];
+                let c3 = self.holders[d + 2][r + 2];
+                let c4 = self.holders[d + 3][r + 3];
+                if c1 == c2 && c1 == c3 && c1 == c4 && c1 != Disk::None {
+                    return true
+                }
+            }
+        }
+        false
     }
 }
 

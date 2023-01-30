@@ -35,7 +35,7 @@ impl Game {
             }
     
             if let Ok(col) = c.trim().parse::<usize>() {
-                if (1..=7).contains(&col) {
+                if (1..=7).contains(&col) && self.holder.h_ptr[col - 1] < 6 {
                     let color = if self.turn % 2 == 0 { Disk::Red } else { Disk::Yellow };
                     self.holder.push(col, color);
                     self.turn += 1;
@@ -57,6 +57,6 @@ impl Game {
     }
 
     fn is_finished(&self) -> bool {
-        self.holder.check_lines() || self.holder.check_columns()
+        self.holder.check_lines() || self.holder.check_columns() || self.holder.check_left_diagonal()
     }
 }
