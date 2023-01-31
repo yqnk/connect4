@@ -24,6 +24,10 @@ impl Holder {
         self.h_ptr[column - 1] += 1;
     }
 
+    pub fn is_column_full(&self, column: usize) -> bool {
+        self.h_ptr[column - 1] < 6
+    }
+
     pub fn check_columns(&self) -> bool {
         self.holders
             .iter()

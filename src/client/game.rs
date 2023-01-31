@@ -35,7 +35,7 @@ impl Game {
             }
     
             if let Ok(col) = c.trim().parse::<usize>() {
-                if (1..=7).contains(&col) && self.holder.h_ptr[col - 1] < 6 {
+                if (1..=7).contains(&col) && self.holder.is_column_full(col) {
                     let color = if self.turn % 2 == 0 { Disk::Red } else { Disk::Yellow };
                     self.holder.push(col, color);
                     self.turn += 1;
