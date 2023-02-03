@@ -5,7 +5,7 @@ use super::disk::Disk;
 const NUM_ROWS: usize = 6; // 6 rows = amt of elements in a column
 const NUM_COLS: usize = 7; // 7 columns = amt of elements in a row
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Holder {
     pub holders: [[Disk; NUM_ROWS]; NUM_COLS],
     pub h_ptr: [usize; 7],
@@ -25,7 +25,7 @@ impl Holder {
     }
 
     pub fn is_column_full(&self, column: usize) -> bool {
-        self.h_ptr[column - 1] < 6
+        self.h_ptr[column - 1] > 5
     }
 
     pub fn check_columns(&self) -> bool {
@@ -66,6 +66,14 @@ impl Holder {
                     && self.holders[d][r] != Disk::None
             })
         })
+    }
+
+    pub fn is_yellow(&self, c: usize, r: usize) -> bool {
+        self.holders[c][r] == Disk::Yellow
+    }
+
+    pub fn is_red(&self, c: usize, r: usize) -> bool {
+        self.holders[c][r] == Disk::Red
     }
 }
 
