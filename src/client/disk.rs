@@ -11,8 +11,8 @@ impl Disk {
     pub fn as_str(&self) -> &str {
         match self {
             Disk::None => "   ",
-            Disk::Red => " R ",
-            Disk::Yellow => " Y "
+            Disk::Red => " \x1b[38;5;1mR\x1b[38;5;251m ",
+            Disk::Yellow => " \x1b[38;5;220mY\x1b[38;5;251m "
         }
     }
 }
