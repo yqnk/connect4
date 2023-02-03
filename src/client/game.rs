@@ -2,8 +2,11 @@
 
 use std::io::{self, Write};
 
+use crate::client::ai::{AI, possible_moves};
+
 use super::holder::Holder;
 use super::disk::Disk;
+use super::ai::Idiot;
 
 pub struct Game {
     pub holder: Holder,
@@ -19,14 +22,16 @@ impl Game {
         while !self.is_finished() && self.turn < 43 {
             self.update();
         }
+        self.clear();
+        println!("{}", self.holder);
     }
 
     fn update(&mut self) {
         loop {
             self.clear();
             println!("{}", self.holder);
-            print!("{} > ", self.turn);
-            io::stdout().flush().expect("Failed flushing stdout...");
+            print!("{} {} > ", self.turn, Idiot::evaluate(&self.holder));
+            io::stdout().flush().expect("Failed printing stdout...");
     
             let c: String = self.get_column();
             if c.contains("exit") {
@@ -35,9 +40,8 @@ impl Game {
             }
     
             if let Ok(col) = c.trim().parse::<usize>() {
-                if (1..=7).contains(&col) && self.holder.is_column_full(col) {
-                    let color = if self.turn % 2 == 0 { Disk::Red } else { Disk::Yellow };
-                    self.holder.push(col, color);
+                if (1..=7).contains(&col) && !self.holder.is_column_full(col) {
+                    self.holder.push(col, self.current_disk());
                     self.turn += 1;
                     break;
                 }
@@ -45,6 +49,12 @@ impl Game {
         }
     }
     
+    pub fn current_disk(&self) -> Disk {
+        match self.turn % 2 {
+            0 => Disk::Red,
+            _ => Disk::Yellow
+        }
+    }
 
     fn clear(&self) {
         io::stdout().write_all("\x1b[2J\x1b[1;1H".as_bytes()).unwrap();
