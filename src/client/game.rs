@@ -29,8 +29,12 @@ impl Game {
     fn update(&mut self) {
         loop {
             self.clear();
+            let alpha = i32::min_value();
+            let beta = i32::max_value();
+            let maximizing_player = false;
+            let (best_value, best_column) = Idiot::alphabeta(1, &mut self.holder, alpha, beta, maximizing_player);
             println!("{}", self.holder);
-            print!("{} {} > ", self.turn, Idiot::evaluate(&self.holder));
+            print!("[{} up to {}] best move : {} > ", Idiot::evaluate(&mut self.holder), best_value, best_column);
             io::stdout().flush().expect("Failed printing stdout...");
     
             let c: String = self.get_column();
