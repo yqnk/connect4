@@ -18,23 +18,22 @@ impl Game {
         Self { holder: Holder::new(), turn: 1 }
     }
     
-    pub fn begin(&mut self) {
+    pub fn begin(&mut self, ai: bool) {
         while !self.is_finished() && self.turn < 43 {
-            self.update();
+            self.update(ai);
         }
         self.clear();
         println!("{}", self.holder);
     }
 
-    fn update(&mut self) {
+    fn update(&mut self, ai: bool) {
         loop {
             self.clear();
             let alpha = i32::min_value();
             let beta = i32::max_value();
-            let maximizing_player = false;
-            let (best_value, best_column) = Idiot::alphabeta(1, &mut self.holder, alpha, beta, maximizing_player);
+            let (_best_value, best_column) = Idiot::alphabeta(4, &mut self.holder, alpha, beta, true);
             println!("{}", self.holder);
-            print!("[{} up to {}] best move : {} > ", Idiot::evaluate(&mut self.holder), best_value, best_column);
+            print!("[Turn {}] |{}| > ", self.turn, Idiot::evaluate(&mut self.holder));
             io::stdout().flush().expect("Failed printing stdout...");
     
             let c: String = self.get_column();
@@ -47,6 +46,10 @@ impl Game {
                 if (1..=7).contains(&col) && !self.holder.is_column_full(col) {
                     self.holder.push(col, self.current_disk());
                     self.turn += 1;
+                    if ai {
+                        self.holder.push(best_column, self.current_disk());
+                        self.turn += 1;
+                    }
                     break;
                 }
             }

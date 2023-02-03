@@ -50,7 +50,7 @@ impl Idiot {
             let mut best_column = 0;
             for column in 1..8 {
                 if !holder.is_column_full(column) {
-                    let mut new_board = Idiot::make_move(&mut holder.clone(), column, Disk::Red);
+                    let mut new_board = Idiot::make_move(&mut holder.clone(), column, Disk::Yellow);
                     let (new_value, _) = Idiot::alphabeta(depth - 1, &mut new_board, alpha, beta, false);
                     if new_value > best_value {
                         best_value = new_value;
@@ -68,7 +68,7 @@ impl Idiot {
             let mut best_column = 0;
             for column in 1..8 {
                 if !holder.is_column_full(column) {
-                    let mut new_board = Idiot::make_move(&mut holder.clone(), column, Disk::Yellow);
+                    let mut new_board = Idiot::make_move(&mut holder.clone(), column, Disk::Red);
                     let (new_value, _) = Idiot::alphabeta(depth - 1, &mut new_board, alpha, beta, true);
                     if new_value < best_value {
                         best_value = new_value;

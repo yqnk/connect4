@@ -6,5 +6,5 @@ use client::game::Game;
 
 fn main() {
     let mut g = Game::new();
-    g.begin();
+    g.begin(true);
 }
