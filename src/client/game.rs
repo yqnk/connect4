@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 use std::io::{self, Write};
+use std::{thread, time};
 
 use crate::client::ai::{AI, possible_moves};
 
@@ -18,44 +19,25 @@ impl Game {
         Self { holder: Holder::new(), turn: 1 }
     }
     
-    pub fn begin(&mut self, ai: bool) {
+    pub fn begin(&mut self, ai: u8) {
         while !self.is_finished() && self.turn < 43 {
-            self.update(ai);
+            match ai {
+                0 => self.update_idiot(),
+                1 => self.update_good(),
+                _ => self.alone()
+            }
         }
         self.clear();
         println!("{}", self.holder);
     }
 
-    fn update(&mut self, ai: bool) {
-        loop {
-            self.clear();
-            let alpha = i32::min_value();
-            let beta = i32::max_value();
-            let (_best_value, best_column) = Idiot::alphabeta(4, &mut self.holder, alpha, beta, true);
-            println!("{}", self.holder);
-            print!("[Turn {}] |{}| > ", self.turn, Idiot::evaluate(&mut self.holder));
-            io::stdout().flush().expect("Failed printing stdout...");
-    
-            let c: String = self.get_column();
-            if c.contains("exit") {
-                self.turn = 43;
-                break;
-            }
-    
-            if let Ok(col) = c.trim().parse::<usize>() {
-                if (1..=7).contains(&col) && !self.holder.is_column_full(col) {
-                    self.holder.push(col, self.current_disk());
-                    self.turn += 1;
-                    if ai {
-                        self.holder.push(best_column, self.current_disk());
-                        self.turn += 1;
-                    }
-                    break;
-                }
-            }
-        }
+    pub fn flush_holder(&self) {
+        self.clear();
+        println!("{}", self.holder);
+        print!("[Turn {}] > ", self.turn);
+        io::stdout().flush().expect("Failed printing stdout...");
     }
-    
+
     pub fn current_disk(&self) -> Disk {
         match self.turn % 2 {
             0 => Disk::Red,
@@ -75,5 +57,60 @@ impl Game {
 
     fn is_finished(&self) -> bool {
         self.holder.check_lines() || self.holder.check_columns() || self.holder.check_left_diagonal() || self.holder.check_right_diagonal()
+    }
+
+    fn update_idiot(&mut self) {
+        loop {
+            let alpha = i32::min_value();
+            let beta = i32::max_value();
+            let (_best_value, best_column) = Idiot::alphabeta(4, &mut self.holder, alpha, beta, true);
+
+            self.flush_holder();
+    
+            let c: String = self.get_column();
+            if c.contains("exit") {
+                self.turn = 43;
+                break;
+            }
+    
+            if let Ok(col) = c.trim().parse::<usize>() {
+                if (1..=7).contains(&col) && !self.holder.is_column_full(col) {
+                    self.holder.push(col, self.current_disk());
+                    self.turn += 1;
+                    
+                    self.flush_holder();
+                    // AI's turn
+                    let laps = time::Duration::from_secs(1);
+                    thread::sleep(laps);
+                    self.holder.push(best_column, self.current_disk());
+                    self.turn += 1;
+                    break;
+                }
+            }
+        }
+    }
+    
+    pub fn update_good(&mut self) {
+        
+    }
+
+    pub fn alone(&mut self) {
+        loop {
+            self.flush_holder();
+    
+            let c: String = self.get_column();
+            if c.contains("exit") {
+                self.turn = 43;
+                break;
+            }
+    
+            if let Ok(col) = c.trim().parse::<usize>() {
+                if (1..=7).contains(&col) && !self.holder.is_column_full(col) {
+                    self.holder.push(col, self.current_disk());
+                    self.turn += 1;
+                    break;
+                }
+            }
+        }
     }
 }

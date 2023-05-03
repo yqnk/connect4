@@ -15,6 +15,7 @@ macro_rules! min {
 }
 
 pub struct Idiot;
+pub struct NNAi;
 
 pub trait AI {
     fn make_move(holder: &mut Holder, column: usize, disk: Disk) -> Holder;
